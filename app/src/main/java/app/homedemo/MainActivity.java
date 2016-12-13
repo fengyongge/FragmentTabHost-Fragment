@@ -19,7 +19,7 @@ public class MainActivity extends FragmentActivity {
     /**
      * FragmentTabhost
      */
-    private FragmentTabHost mTabHost;
+    private FragmentTabHost mTabHost,tabhost;
 
     /**
      * 布局填充器
@@ -50,34 +50,107 @@ public class MainActivity extends FragmentActivity {
      *
      *
      */
+    private String TAB_TASK="工作",TAB_CUSTOM="会员",TAB_MESSAGE="消息",TAB_ME="我的";
+    TabIndicatorView taskIndicator,cusstomIndicator,messageIndicator,mecoverIndicator;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initView();
+        init2();
     }
 
-    /**
-     * 初始化组件
-     */
-    private void initView() {
-        mLayoutInflater = LayoutInflater.from(this);
+//    /**
+//     * 初始化组件
+//     */
+//    private void initView() {
+//        mLayoutInflater = LayoutInflater.from(this);
+//
+//        // 找到TabHost
+//        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+//        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+//        // 得到fragment的个数
+//        int count = mFragmentArray.length;
+//        for (int i = 0; i < count; i++) {
+//            // 给每个Tab按钮设置图标、文字和内容
+//            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextArray[i])
+//                    .setIndicator(getTabItemView(i));
+//            // 将Tab按钮添加进Tab选项卡中
+//            mTabHost.addTab(tabSpec, mFragmentArray[i], null);
+//            // 设置Tab按钮的背景
+//            mTabHost.getTabWidget().getChildAt(i)
+//                    .setBackgroundResource(R.drawable.selector_tab_background);
+//        }
+//    }
 
-        // 找到TabHost
-        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
-        // 得到fragment的个数
-        int count = mFragmentArray.length;
-        for (int i = 0; i < count; i++) {
-            // 给每个Tab按钮设置图标、文字和内容
-            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(mTextArray[i])
-                    .setIndicator(getTabItemView(i));
-            // 将Tab按钮添加进Tab选项卡中
-            mTabHost.addTab(tabSpec, mFragmentArray[i], null);
-            // 设置Tab按钮的背景
-            mTabHost.getTabWidget().getChildAt(i)
-                    .setBackgroundResource(R.drawable.selector_tab_background);
-        }
+    public void init2(){
+        tabhost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        tabhost.setup(this, getSupportFragmentManager(),
+                R.id.realtabcontent);
+
+        TabHost.TabSpec spec = tabhost.newTabSpec(TAB_TASK);
+        taskIndicator = new TabIndicatorView(this);
+        taskIndicator.setTabIcon(R.drawable.main_task_out,
+                R.drawable.main_task_on);
+        taskIndicator.setTabTitle("工作");
+        spec.setIndicator(taskIndicator);
+        tabhost.addTab(spec, Fragment1.class, null);
+
+
+        spec = tabhost.newTabSpec(TAB_CUSTOM);
+        cusstomIndicator = new TabIndicatorView(this);
+        cusstomIndicator.setTabIcon(R.drawable.main_member_out,
+                R.drawable.main_member_on);
+        cusstomIndicator.setTabTitle("会员");
+        spec.setIndicator(cusstomIndicator);
+        tabhost.addTab(spec, Fragment2.class, null);
+
+        spec = tabhost.newTabSpec(TAB_MESSAGE);
+        messageIndicator = new TabIndicatorView(this);
+        messageIndicator.setTabIcon(R.drawable.main_message_out,
+                R.drawable.main_message_on);
+        messageIndicator.setTabTitle("消息");
+        messageIndicator.setTabUnreadCount(10);
+        spec.setIndicator(messageIndicator);
+        tabhost.addTab(spec, Fragment3.class, null);
+
+        spec = tabhost.newTabSpec(TAB_ME);
+        mecoverIndicator = new TabIndicatorView(this);
+        mecoverIndicator.setTabIcon(R.drawable.main_admin_out,
+                R.drawable.main_admin_on);
+        mecoverIndicator.setTabTitle("我的");
+        spec.setIndicator(mecoverIndicator);
+        tabhost.addTab(spec, Fragment4.class, null);
+
+        // 去掉分割线
+//        tabhost.getTabWidget().setDividerDrawable(android.R.color.white);
+        tabhost.getTabWidget().setDividerDrawable(R.color.white);
+
+        // 初始化 tab选中
+        tabhost.setCurrentTabByTag(TAB_TASK);
+        taskIndicator.setTabSelected(true);
+
+        // 设置tab切换的监听
+
+        tabhost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tag) {
+                taskIndicator.setTabSelected(false);
+                cusstomIndicator.setTabSelected(false);
+                mecoverIndicator.setTabSelected(false);
+                messageIndicator.setTabSelected(false);
+
+                if (TAB_TASK.equals(tag)) {
+                    taskIndicator.setTabSelected(true);
+                } else if (TAB_CUSTOM.equals(tag)) {
+                    cusstomIndicator.setTabSelected(true);
+                } else if (TAB_MESSAGE.equals(tag)) {
+                    messageIndicator.setTabSelected(true);
+                } else if (TAB_ME.equals(tag)) {
+                    mecoverIndicator.setTabSelected(true);
+                }
+            }
+        });
+
     }
 
     /**
